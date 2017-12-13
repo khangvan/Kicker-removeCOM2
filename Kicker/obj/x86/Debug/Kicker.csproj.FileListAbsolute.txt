@@ -1,0 +1,76 @@
+C:\kicker\Kicker\bin\Debug\Kicker.exe.config
+c:\kicker\Kicker\bin\Debug\Kicker.exe
+c:\kicker\Kicker\bin\Debug\Kicker.pdb
+c:\kicker\Kicker\obj\x86\Debug\ResolveAssemblyReference.cache
+c:\kicker\Kicker\obj\x86\Debug\Kicker.Form1.resources
+c:\kicker\Kicker\obj\x86\Debug\Kicker.frmError.resources
+c:\kicker\Kicker\obj\x86\Debug\Kicker.frmProductionOrder.resources
+c:\kicker\Kicker\obj\x86\Debug\Kicker.Properties.Resources.resources
+c:\kicker\Kicker\obj\x86\Debug\GenerateResource.read.1.tlog
+c:\kicker\Kicker\obj\x86\Debug\GenerateResource.write.1.tlog
+c:\kicker\Kicker\obj\x86\Debug\Kicker.exe
+c:\kicker\Kicker\obj\x86\Debug\Kicker.pdb
+C:\kicker\Kicker\obj\x86\Debug\Kicker.csproj.ResolveComReference.cache
+C:\kicker\Kicker\obj\x86\Debug\Interop.BarTender.dll
+C:\kicker\Kicker\bin\Debug\Interop.BarTender.dll
+C:\kicker\Kicker\bin\Debug\Kicker.exe.manifest
+C:\kicker\Kicker\bin\Debug\Kicker.application
+C:\kicker\Kicker\obj\x86\Debug\Kicker.exe.manifest
+C:\kicker\Kicker\obj\x86\Debug\Kicker.application
+C:\kicker\Kicker\bin\Debug\program.mdb
+C:\kicker-pwCOM6\Kicker\bin\Debug\program.mdb
+C:\kicker-pwCOM6\Kicker\bin\Debug\Kicker.exe.config
+C:\kicker-pwCOM6\Kicker\bin\Debug\Kicker.exe.manifest
+C:\kicker-pwCOM6\Kicker\bin\Debug\Kicker.application
+C:\kicker-pwCOM6\Kicker\bin\Debug\Kicker.exe
+C:\kicker-pwCOM6\Kicker\bin\Debug\Kicker.pdb
+C:\kicker-pwCOM6\Kicker\bin\Debug\Interop.BarTender.dll
+C:\kicker-pwCOM6\Kicker\obj\x86\Debug\ResolveAssemblyReference.cache
+C:\kicker-pwCOM6\Kicker\obj\x86\Debug\Interop.BarTender.dll
+C:\kicker-pwCOM6\Kicker\obj\x86\Debug\Kicker.csproj.ResolveComReference.cache
+C:\kicker-pwCOM6\Kicker\obj\x86\Debug\Kicker.Form1.resources
+C:\kicker-pwCOM6\Kicker\obj\x86\Debug\Kicker.frmError.resources
+C:\kicker-pwCOM6\Kicker\obj\x86\Debug\Kicker.frmProductionOrder.resources
+C:\kicker-pwCOM6\Kicker\obj\x86\Debug\Kicker.Properties.Resources.resources
+C:\kicker-pwCOM6\Kicker\obj\x86\Debug\GenerateResource.read.1.tlog
+C:\kicker-pwCOM6\Kicker\obj\x86\Debug\GenerateResource.write.1.tlog
+C:\kicker-pwCOM6\Kicker\obj\x86\Debug\Kicker.exe.manifest
+C:\kicker-pwCOM6\Kicker\obj\x86\Debug\Kicker.application
+C:\kicker-pwCOM6\Kicker\obj\x86\Debug\Kicker.exe
+C:\kicker-pwCOM6\Kicker\obj\x86\Debug\Kicker.pdb
+D:\6. Programing Project\Kicker-removeCOM2\Kicker\bin\Debug\Kicker.exe.config
+D:\6. Programing Project\Kicker-removeCOM2\Kicker\obj\x86\Debug\Kicker.csproj.ResolveComReference.cache
+D:\6. Programing Project\Kicker-removeCOM2\Kicker\obj\x86\Debug\Kicker.exe
+D:\6. Programing Project\Kicker-removeCOM2\Kicker\obj\x86\Debug\Kicker.pdb
+D:\6. Programing Project\Kicker-removeCOM2\Kicker\obj\x86\Debug\Kicker.Form1.resources
+D:\6. Programing Project\Kicker-removeCOM2\Kicker\obj\x86\Debug\Kicker.frmError.resources
+D:\6. Programing Project\Kicker-removeCOM2\Kicker\obj\x86\Debug\Kicker.frmProductionOrder.resources
+D:\6. Programing Project\Kicker-removeCOM2\Kicker\obj\x86\Debug\Kicker.Properties.Resources.resources
+D:\6. Programing Project\Kicker-removeCOM2\Kicker\obj\x86\Debug\Kicker.csproj.GenerateResource.Cache
+D:\6. Programing Project\Kicker-removeCOM2\Kicker\bin\Debug\program.mdb
+D:\6. Programing Project\Kicker-removeCOM2\Kicker\bin\Debug\Kicker.exe.manifest
+D:\6. Programing Project\Kicker-removeCOM2\Kicker\bin\Debug\Kicker.application
+D:\6. Programing Project\Kicker-removeCOM2\Kicker\bin\Debug\Kicker.exe
+D:\6. Programing Project\Kicker-removeCOM2\Kicker\bin\Debug\Kicker.pdb
+D:\6. Programing Project\Kicker-removeCOM2\Kicker\obj\x86\Debug\Kicker.exe.manifest
+D:\6. Programing Project\Kicker-removeCOM2\Kicker\obj\x86\Debug\Kicker.application
+D:\6. Programing Project\Kicker-removeCOM2\Kicker\obj\x86\Debug\Kicker.csprojResolveAssemblyReference.cache
+F:\9. GitSource\Kicker-removeCOM2\Kicker\bin\Debug\Kicker.exe.config
+F:\9. GitSource\Kicker-removeCOM2\Kicker\obj\x86\Debug\Interop.BarTender.dll
+F:\9. GitSource\Kicker-removeCOM2\Kicker\obj\x86\Debug\Kicker.csproj.ResolveComReference.cache
+F:\9. GitSource\Kicker-removeCOM2\Kicker\obj\x86\Debug\Kicker.exe
+F:\9. GitSource\Kicker-removeCOM2\Kicker\obj\x86\Debug\Kicker.pdb
+F:\9. GitSource\Kicker-removeCOM2\Kicker\bin\Debug\program.mdb
+F:\9. GitSource\Kicker-removeCOM2\Kicker\bin\Debug\Kicker.exe.manifest
+F:\9. GitSource\Kicker-removeCOM2\Kicker\bin\Debug\Kicker.application
+F:\9. GitSource\Kicker-removeCOM2\Kicker\bin\Debug\Kicker.exe
+F:\9. GitSource\Kicker-removeCOM2\Kicker\bin\Debug\Kicker.pdb
+F:\9. GitSource\Kicker-removeCOM2\Kicker\bin\Debug\Interop.BarTender.dll
+F:\9. GitSource\Kicker-removeCOM2\Kicker\obj\x86\Debug\Kicker.csprojResolveAssemblyReference.cache
+F:\9. GitSource\Kicker-removeCOM2\Kicker\obj\x86\Debug\Kicker.Form1.resources
+F:\9. GitSource\Kicker-removeCOM2\Kicker\obj\x86\Debug\Kicker.frmError.resources
+F:\9. GitSource\Kicker-removeCOM2\Kicker\obj\x86\Debug\Kicker.frmProductionOrder.resources
+F:\9. GitSource\Kicker-removeCOM2\Kicker\obj\x86\Debug\Kicker.Properties.Resources.resources
+F:\9. GitSource\Kicker-removeCOM2\Kicker\obj\x86\Debug\Kicker.csproj.GenerateResource.Cache
+F:\9. GitSource\Kicker-removeCOM2\Kicker\obj\x86\Debug\Kicker.exe.manifest
+F:\9. GitSource\Kicker-removeCOM2\Kicker\obj\x86\Debug\Kicker.application

@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<configuration>
+  <configSections>
+  </configSections>
+  <connectionStrings>
+    <add name="Kicker.Properties.Settings.programConnectionString"
+      connectionString="Provider=Microsoft.Jet.OLEDB.4.0;Data Source=|DataDirectory|\program.mdb;Persist Security Info=True"
+      providerName="System.Data.OleDb" />
+  </connectionStrings>
+  <appSettings>
+    <add key="ACSEECONNECTION" value="packet size=4096;user id=reports;password=reports;data source=VNMACSDB.ENG.PSCNET.COM;persist security info=False;initial catalog=ACS EE"/>
+    <add key="ACSEECLIENTSTATECONNECTION" value="packet size=4096;user id=reports;password=reports;data source=VNMACSDB.ENG.PSCNET.COM;persist security info=False;initial catalog=ACSEEClientState"/>
+    <add key="ACSEESTATECONNECTION" value="packet size=4096;user id=reports;password=reports;data source=VNMACSDB.ENG.PSCNET.COM;persist security info=False;initial catalog=ACSEEState"/>
+    <add key="NETPRODBLocation" value="\\\\svksrv722.psc.pscnet.com\\prd\\dldb\\NetPro\\Tests.mdb"/>
+    <add key="NETPROSecondDBLocation" value="\\anothersomewhere"/>
+    <add key="NETPROFilesLocation"  value="\\somewhereelse"/>
+    <add key="UseAccessTables" value="false"/>
+    <add key="TestManagerRunPath" value="C:\idpmdc\winate32\dltest32.exe  "/>
+    <add key="TMSourceDirectory" value="\\Vnmsrv603.dl.net\prd\SW-Test\Winate\"/>
+    <add key="TMDestDirectory" value="c:\idpmdc\TA\TM\"/>
+    <add key="TMTestMaxHalfSeconds" value="99999"/>
+    <add key="VBTestMaxHalfSeconds" value="99999" />
+    <add key="PromptSerialSwitchBox" value="false"/>
+    <add key="SwitchBoxBinarySeparatorChar" value=";"/>
+
+    <add key="runLocation" value="Slovakia"/>
+
+    <add key="SendKeys" value="SendInput"/>
+  </appSettings>
+  </configuration>

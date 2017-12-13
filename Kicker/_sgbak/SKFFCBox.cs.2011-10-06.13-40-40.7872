@@ -1,0 +1,320 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Windows.Forms;
+using System.IO;
+
+namespace Kicker
+{
+    class SKFFCBox
+    {
+        private Boolean USBPower, AuxEnable, blnWait;
+        public long PortNum, Port1, Port2;
+        public string strInput;
+        private System.IO.Ports.SerialPort ControlCom;
+        public static void DelayMS(int MilliSecondsToPauseFor)
+        {
+            System.DateTime ThisMoment = System.DateTime.Now;
+            System.TimeSpan duration = new System.TimeSpan(0, 0, 0, 0, MilliSecondsToPauseFor);
+            System.DateTime AfterWards = ThisMoment.Add(duration);
+
+            while (AfterWards >= ThisMoment)
+            {
+                System.Windows.Forms.Application.DoEvents();
+                ThisMoment = System.DateTime.Now;
+            }
+        }
+
+
+        public string PortSelect(long ControlPort, long SelectPort,
+        Boolean blnUSBPWRON, double timeout = 5, Boolean BlueLightOn = false,
+        long SelectAuxPort = 0)
+        {
+            //'SelectPort=0 is all off, other values route COM1 to selected port
+            //'SelectPort=13 = USBPort Enabled but not powered (bit 13)
+            //'blnUSBPWRON=true turns on USB power (bit 12)
+
+            string strCMD, strBIN;
+            long lngPortVal, lngVal, lngVal2;
+            DateTime ThisMoment, AfterWards;
+            TimeSpan duration;
+            int i;
+
+            ControlCom = new System.IO.Ports.SerialPort();
+
+            //Check Data
+            long lngPortMask = 0x3fff;             // Use mask to invert input because Weeder inverts
+            lngPortVal = lngPortMask ^ SelectPort; // Invert by XORing with input mask
+
+            //check for any data in the Aux port (if so seporate out selectport and selecAuxPort)
+            if (SelectAuxPort > 0)
+            {
+                int ShiftAuxPort = 4;
+                long AuxPortBit = 0x3eff;
+                long AuxBitsMask = 0x3f0f;
+
+                // On the test box the Aux ports are labled 5-8 but the test engineer
+                // may request the aux port to number 1-4.  the following shifts the 
+                // 5-8 to 1-4 position 
+                // input string to 0 to enable the aux port.
+
+                if (SelectAuxPort >= 16) SelectAuxPort = SelectAuxPort >> ShiftAuxPort;
+
+                SelectAuxPort = ~SelectAuxPort; // invert data
+                SelectAuxPort = SelectAuxPort << ShiftAuxPort; // move to correct position 
+                lngPortVal = AuxBitsMask & lngPortVal; // Mask off any bits in aux port location
+                lngPortVal = SelectAuxPort | lngPortVal; // put together both port values
+                lngPortVal = lngPortVal & AuxPortBit; // now set the select aux port bit to 0
+
+            }
+
+            // Check for Bleu LED on or off
+
+            if (BlueLightOn == true)
+            {
+                long BlueBitMask = 0x37ff;
+                lngPortVal = lngPortVal & BlueBitMask; // Change Blue LED bit to 0
+            }
+
+            //For USB on and off switch both power and USB led at the same time
+            if (blnUSBPWRON == true)
+            {
+                long USBPowerNLight = 0x39ff;
+                lngPortVal = lngPortVal & USBPowerNLight;
+            }
+
+            ControlCom.PortName = "COM" + ControlPort.ToString().Trim();
+            //'Normally 2
+            //' 9600 baud, no parity, 8 data, and 1 stop bit.
+            ControlCom.BaudRate = 9600;
+            ControlCom.DataBits = 8;
+            ControlCom.Parity = System.IO.Ports.Parity.None;
+            ControlCom.RtsEnable = true;
+            ControlCom.ReceivedBytesThreshold = 1;
+            //' Open the port.
+            if (!(ControlCom.IsOpen))
+                ControlCom.Open();
+
+            strCMD = "0000" + lngPortVal.ToString("X");
+            strCMD = "AW" + strCMD.Substring(strCMD.Length - 4, 4) + (char)13;
+            if (ControlCom.BytesToRead > 0)
+            {
+                try
+                {
+                    strInput = ControlCom.ReadExisting();
+                }
+                catch (Exception ex)
+                {
+                    strInput = "";
+                }
+            }
+
+            ControlCom.WriteLine(strCMD);
+            DelayMS(500);
+            strInput = "";
+            ThisMoment = System.DateTime.Now;
+            duration = new System.TimeSpan(0, 0, 0, 0, (int)timeout * 1000);
+            AfterWards = ThisMoment.Add(duration);
+            strCMD = "AR" + (char)13;
+            ControlCom.WriteLine(strCMD);
+            while ((strInput.Length < 12) && (AfterWards >= ThisMoment))
+            {
+                System.Windows.Forms.Application.DoEvents();
+                ThisMoment = System.DateTime.Now;
+                strInput += ControlCom.ReadExisting();
+            }
+            if (AfterWards < ThisMoment)
+            {
+                ControlCom.Close();
+                return ("ERROR: Timeout");
+            }
+            else
+            {
+                strInput = "0X" + strInput.Substring(8, 4);// +"\r\n";"0X" +
+                strBIN = "";
+                lngVal = Convert.ToUInt32(strInput, 16);
+                for (i = 13; i < 0; i--)
+                {
+                    lngVal2 = Convert.ToUInt32(Math.Pow(2, (double)i));
+                    if ((lngVal & lngVal2) == lngVal2)
+                        strBIN += "1";
+                    else
+                        strBIN += "0";
+                }
+
+                ControlCom.Close();
+                string testString;
+                testString = strInput;
+
+                if (("0000" + lngPortVal.ToString("X")).EndsWith(strInput.Substring(strInput.Length - 4, 4)))
+                    return ("OK: Expect 0X" + lngPortVal.ToString("X") + " GOT " + strInput + " : " + strBIN);
+                else
+                    return ("ERROR: Expect 0X" + lngPortVal.ToString("X") + " GOT " + strInput);
+
+
+            }
+        }
+
+        /*
+        public string PortSelect(long ControlPort, long SelectPort,
+        Boolean blnUSBPWRON, double timeout = 5, Boolean AuxEnable = false,
+        long SelectAuxPort = -1)
+        {
+            ControlCom = new System.IO.Ports.SerialPort();
+            //'SelectPort=0 is all off, other values route COM1 to selected port
+            //'SelectPort=13 = USBPort Enabled but not powered (bit 13)
+            //'blnUSBPWRON=true turns on USB power (bit 12)
+            string strPortAddress, strCMD, strBIN;
+            long lngPort, lngPortVal, lngU, USBPwrBit, lngVal, lngVal2;
+            DateTime ThisMoment, AfterWards;
+            TimeSpan duration;
+            int i;
+            if ((SelectPort < 0) || (SelectPort > 15))
+                return ("ERROR: Port #" + SelectPort + " not supported");
+
+            if (SelectPort == 0) USBPower = false;  //'This is ALL OFF force USB power to off
+            strPortAddress = "14000601070208030904100511-113";
+            strPortAddress = "1400010203040506071414141110-1";
+            lngPort = Convert.ToUInt32((strPortAddress.Substring((int)SelectPort * 2, 2)));
+            if (lngPort < 14)
+            {
+                if (!(AuxEnable))
+                {
+                    Port1 = lngPort;
+                    Port2 = 0;
+                }
+                else
+                {
+                    if (SelectPort < 5)
+                        Port1 = lngPort;
+                    else if (SelectPort < 9)
+                        Port2 = lngPort;
+
+                    if (SelectAuxPort > 0)
+                        Port2 = Convert.ToUInt32((strPortAddress.Substring(((int)SelectAuxPort + 4) * 2, 2)));
+                }
+            }
+
+            ControlCom.PortName = "COM" + ControlPort.ToString().Trim();
+            //'Normally 2
+            //' 9600 baud, no parity, 8 data, and 1 stop bit.
+            ControlCom.BaudRate = 9600;
+            ControlCom.DataBits = 8;
+            ControlCom.Parity = System.IO.Ports.Parity.None;
+            ControlCom.RtsEnable = true;
+            ControlCom.ReceivedBytesThreshold = 1;
+            //' Open the port.
+            if (!(ControlCom.IsOpen))
+                ControlCom.Open();
+            lngPortVal = 0X3FFF & (~(Convert.ToInt32(Math.Pow(2, (double)lngPort))));
+            if (AuxEnable)
+            {
+                lngPortVal = 0X3FFF & (~(Convert.ToInt32(Math.Pow(2, (double)Port1))));
+                lngPortVal = lngPortVal & (~(Convert.ToInt32(Math.Pow(2, (double)Port2))));
+                lngPortVal = lngPortVal & (~(Convert.ToInt32(Math.Pow(2, 8)))); //'enable Aux Splitter
+                //'Ports 1-4 to COM1 input
+                //'Ports 5-8 to Aux Com Input
+            }
+            if (lngPort == -1)
+            {
+                //'indicates Power change only, need to read current state
+                ThisMoment = System.DateTime.Now;
+                duration = new System.TimeSpan(0, 0, 0, 0, (int)timeout * 1000);
+                AfterWards = ThisMoment.Add(duration);
+                strInput = ControlCom.ReadExisting();
+                strInput = "";
+                ControlCom.WriteLine("AR" + (char)13);
+                while ((strInput.Length < 5) && (AfterWards >= ThisMoment))
+                {
+
+                    System.Windows.Forms.Application.DoEvents();
+                    ThisMoment = System.DateTime.Now;
+                    strInput += ControlCom.ReadExisting();
+
+                }
+                if (AfterWards >= ThisMoment)
+                {
+                    ControlCom.Close();
+                    return ("ERROR: Timeout");
+                }
+                else
+                {
+                    lngU = strInput.IndexOf((char)13) - 2;
+                    if (lngU > -1) strInput = strInput.Substring(2, (int)lngU);
+                }
+                strInput = "0X" + strInput;
+                lngPortVal = Convert.ToUInt32(strInput);
+            }
+
+
+            if (Port1 == 0) lngPortVal = lngPortVal & (~(Convert.ToUInt32(Math.Pow(2, 11)))); //' turn on blue led
+
+            USBPwrBit = 9;
+            if (blnUSBPWRON)
+                lngPortVal = lngPortVal & (~(Convert.ToUInt32(Math.Pow(2, USBPwrBit))));
+            else
+                lngPortVal = lngPortVal | (Convert.ToUInt32(Math.Pow(2, USBPwrBit)));
+
+            strCMD = "0000" + lngPortVal.ToString("X");
+            strCMD = "AW" + strCMD.Substring(strCMD.Length - 4, 4) + (char)13;
+            if (ControlCom.BytesToRead > 0)
+            {
+                try
+                {
+                    strInput = ControlCom.ReadExisting();
+                }
+                catch (Exception ex)
+                {
+                    strInput = "";
+                }
+            }
+
+            ControlCom.WriteLine(strCMD);
+            DelayMS(500);
+            strInput = "";
+            ThisMoment = System.DateTime.Now;
+            duration = new System.TimeSpan(0, 0, 0, 0, (int)timeout * 1000);
+            AfterWards = ThisMoment.Add(duration);
+            strCMD = "AR" + (char)13;
+            ControlCom.WriteLine(strCMD);
+            while ((strInput.Length < 12) && (AfterWards >= ThisMoment))
+            {
+                System.Windows.Forms.Application.DoEvents();
+                ThisMoment = System.DateTime.Now;
+                strInput += ControlCom.ReadExisting();
+            }
+            if (AfterWards < ThisMoment)
+            {
+                ControlCom.Close();
+                return ("ERROR: Timeout");
+            }
+            else
+            {
+                strInput = "0X" + strInput.Substring(8, 4);// +"\r\n";"0X" +
+                strBIN = "";
+                lngVal = Convert.ToUInt32(strInput, 16);
+                for (i = 13; i < 0; i--)
+                {
+                    lngVal2 = Convert.ToUInt32(Math.Pow(2, (double)i));
+                    if ((lngVal & lngVal2) == lngVal2)
+                        strBIN += "1";
+                    else
+                        strBIN += "0";
+                }
+
+                ControlCom.Close();
+                if (("0000" + lngPortVal.ToString("X")).EndsWith(strInput.Substring(strInput.Length - 4, 4)))
+                    return ("OK: Expect 0X" + lngPortVal.ToString("X") + " GOT " + strInput + " : " + strBIN);
+                else
+                    return ("ERROR: Expect 0X" + lngPortVal.ToString("X") + " GOT " + strInput);
+
+
+            }
+        }
+        */
+    }
+}

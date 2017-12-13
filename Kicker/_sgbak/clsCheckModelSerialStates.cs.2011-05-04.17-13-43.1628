@@ -1,0 +1,167 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Data.Sql;
+using System.Data.SqlClient;
+using System.Data;
+using System.Data.OleDb;
+using System.Windows.Forms;
+
+namespace Kicker
+{
+    public class clsCheckModelSerialStates
+    {
+        private string strSqlConnection1;
+
+        public clsCheckModelSerialStates(string strConnectionString)
+        {
+
+            strSqlConnection1 = strConnectionString;
+        }
+
+        public string checkForPrePrint(string strModel,string strACSSerial, ref string strProdOrder, ref string strPrintType)
+        {
+            SqlConnection sqlConnectionACSEE ;
+            try
+            {
+                using (sqlConnectionACSEE = new SqlConnection(strSqlConnection1))
+                {
+                    sqlConnectionACSEE.Open();
+                    if (sqlConnectionACSEE.State.Equals(ConnectionState.Open))
+                    {
+                        try
+                        {
+                            SqlCommand cmdGetProdOrderInfo = sqlConnectionACSEE.CreateCommand();
+                            cmdGetProdOrderInfo.CommandType = CommandType.StoredProcedure;
+                            cmdGetProdOrderInfo.CommandText = "ame_TFFC_GetProdOrderInfo";
+
+
+                            cmdGetProdOrderInfo.Parameters.Add("@model", SqlDbType.Char, 20);
+                            cmdGetProdOrderInfo.Parameters["@model"].Value = strModel;
+                            cmdGetProdOrderInfo.Parameters["@model"].Direction = ParameterDirection.Input;
+
+                            cmdGetProdOrderInfo.Parameters.Add("@acsserial", SqlDbType.Char, 20);
+                            cmdGetProdOrderInfo.Parameters["@acsserial"].Value = strACSSerial;
+                            cmdGetProdOrderInfo.Parameters["@acsserial"].Direction = ParameterDirection.Input;
+
+
+                            cmdGetProdOrderInfo.Parameters.Add("@prodorder", SqlDbType.Char, 20);
+                            cmdGetProdOrderInfo.Parameters["@prodorder"].Direction = ParameterDirection.Output;
+
+                            cmdGetProdOrderInfo.Parameters.Add("@printtype", SqlDbType.Char, 20);
+                            cmdGetProdOrderInfo.Parameters["@printtype"].Direction = ParameterDirection.Output;
+
+
+
+                            using (SqlDataReader rd = cmdGetProdOrderInfo.ExecuteReader())
+                            {
+                                if (rd.HasRows == true)
+                                {
+                                    rd.Read();
+                                    strProdOrder = rd["ProductionOrder"].ToString();
+                                    strPrintType = rd["PrintType"].ToString();
+                                }
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            MessageBox.Show(ex.Message);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+            return strPrintType ;
+        }
+
+
+        public string ReserveSerialForProductionOrder(string strModel, string strACSSerial, 
+            string strProductionOrder, string strStation, ref string strPSCSerial)
+        {
+
+            SqlConnection sqlConnectionACSEE ;
+            try
+            {
+                using (sqlConnectionACSEE = new SqlConnection(strSqlConnection1))
+                {
+                    sqlConnectionACSEE.Open();
+                    if (sqlConnectionACSEE.State.Equals(ConnectionState.Open))
+                    {
+                        try
+                        {
+                            SqlCommand cmdReservePSCSerial = sqlConnectionACSEE.CreateCommand();
+                            cmdReservePSCSerial.CommandType = CommandType.StoredProcedure;
+                            cmdReservePSCSerial.CommandText = "ame_TFFC_ReserveSerial";
+
+
+                            cmdReservePSCSerial.Parameters.Add("@prodorder", SqlDbType.Char, 20);
+                            cmdReservePSCSerial.Parameters["@prodorder"].Value = strProductionOrder ;
+                            cmdReservePSCSerial.Parameters["@prodorder"].Direction = ParameterDirection.Input;
+
+
+                            cmdReservePSCSerial.Parameters.Add("@acsserial", SqlDbType.Char, 20);
+                            cmdReservePSCSerial.Parameters["@acsserial"].Value = strACSSerial;
+                            cmdReservePSCSerial.Parameters["@acsserial"].Direction = ParameterDirection.Input;
+
+
+
+                            cmdReservePSCSerial.Parameters.Add("@material", SqlDbType.Char, 20);
+                            cmdReservePSCSerial.Parameters["@material"].Value = strModel;
+                            cmdReservePSCSerial.Parameters["@material"].Direction = ParameterDirection.Input;
+
+                            cmdReservePSCSerial.Parameters.Add("@station", SqlDbType.Char, 20);
+                            cmdReservePSCSerial.Parameters["@station"].Value = strStation;
+                            cmdReservePSCSerial.Parameters["@station"].Direction = ParameterDirection.Input;
+
+
+
+                            cmdReservePSCSerial.Parameters.Add("@serial", SqlDbType.Char, 20);
+                            cmdReservePSCSerial.Parameters["@serial"].Direction = ParameterDirection.Output;
+
+
+                            using (SqlDataReader rd = cmdReservePSCSerial.ExecuteReader())
+                            {
+                                if (rd.HasRows == true)
+                                {
+                                    rd.Read();
+                                    strPSCSerial = rd["serial"].ToString();
+//                                    strPrintType = rd["PrintType"].ToString();
+                                }
+                            }
+
+
+                        }
+                        catch (Exception ex)
+                        {
+                            MessageBox.Show(ex.Message);
+                        }
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+
+
+            return strPSCSerial;
+        }
+
+
+        public string verifyFivedash(string strModel, string strACSSerial)
+        {
+            return "P";
+        }
+
+
+        public string CheckForTestFinish(string strModel, string strACSSerial, string strPSCSerial)
+        {
+            return "";
+        }
+    }
+}

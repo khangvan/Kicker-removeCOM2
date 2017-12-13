@@ -1,0 +1,297 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Windows.Forms;
+using System.Data.Sql;
+using System.Data.SqlClient;
+using System.Configuration;
+using System.Collections;
+using BarTender;
+using System.IO;
+
+
+namespace Kicker
+{
+    public partial class Form1 : Form
+    {
+        public Form1()
+        {
+            InitializeComponent();
+        }
+
+        public string strSqlConnection1;
+        public string strSqlConnection2;
+        public string strSqlConnection3;
+
+        public SqlConnection sqlConnection1;
+        public SqlConnection sqlConnection2;
+        public SqlConnection sqlConnection3;
+
+
+        public Dictionary<string, clsSubTestLimit> dictLimitsByModel;
+        public Dictionary<string, clsSubTestLimit> dictLimitsByProductionOrder;
+
+        public string strModel;
+        public string strSerial;
+
+
+        public string strLastModel;
+        public string strLastTestType;
+
+
+        public string strNetProConnectionString1;
+        public string strNetProConnectionString2;
+        public string strNetProFileLocation;
+
+        public DataTable dtLimits;
+        public DataTable dtKicker;
+
+        public clsRunRealTest objRealTestRunner;
+
+        public clsCheckModelSerialStates objModelStates;
+
+
+        //Declaring a BarTender application variable 
+
+        BarTender.Application btApp;
+
+        //Declaring the BarTender format variable 
+
+        BarTender.Format btFormat; 
+
+
+
+        
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            try
+            {
+                sqlConnection1 = new SqlConnection();
+                strSqlConnection1 = ConfigurationManager.AppSettings.Get("ACSEECONNECTION").ToString();
+                sqlConnection2 = new SqlConnection();
+                strSqlConnection2 = ConfigurationManager.AppSettings.Get("ACSEECLIENTSTATECONNECTION").ToString();
+                sqlConnection3 = new SqlConnection();
+                strSqlConnection3 = ConfigurationManager.AppSettings.Get("ACSEESTATECONNECTION").ToString();
+
+
+
+                strNetProConnectionString1 = ConfigurationManager.AppSettings.Get("NETPRODBLocation").ToString() ;
+                strNetProConnectionString2 = ConfigurationManager.AppSettings.Get("NETPROSecondDBLocation").ToString();
+                strNetProFileLocation = ConfigurationManager.AppSettings.Get("NETPROFilesLocation").ToString();
+
+/*                strPrintPackCustomerLabelName = ConfigurationManager.AppSettings.Get("PrintPackCustomerLabel").ToString();
+                strPrintPackOverpackContentLabelName = ConfigurationManager.AppSettings.Get("PrintPackOverpackContentLabel").ToString();
+                strPrintPackOverpackModelLabelName = ConfigurationManager.AppSettings.Get("PrintPackOverpackModelLabel").ToString();
+
+          
+*/
+
+                strLastModel = "";
+                strLastTestType = "";
+
+                using (sqlConnection1 = new SqlConnection(strSqlConnection1))
+                {
+                    sqlConnection1.Open();
+                    if (sqlConnection1.State.Equals(ConnectionState.Open))
+                    {
+                        try
+                        {
+                            SqlCommand cmdGetLimits = sqlConnection1.CreateCommand();
+                            cmdGetLimits.CommandType = CommandType.StoredProcedure;
+                            cmdGetLimits.CommandText = "ame_report_subtestlimits"; ;
+
+
+                            cmdGetLimits.Parameters.Add("@astation", SqlDbType.Char, 20);
+                            cmdGetLimits.Parameters["@astation"].Value = "Kicker";
+                            cmdGetLimits.Parameters["@astation"].Direction = ParameterDirection.Input;
+
+                            SqlDataAdapter adapter = new SqlDataAdapter(cmdGetLimits);
+                            DataSet ds = new DataSet();
+                            adapter.Fill(ds, "Limits");
+
+                            dtLimits = ds.Tables["LIMITS"];
+
+
+
+                            SqlCommand cmdGetKicker = sqlConnection1.CreateCommand();
+                            cmdGetKicker.CommandType = CommandType.StoredProcedure;
+                            cmdGetKicker.CommandText = "ame_TFFC_GetKickerTable";
+
+                            SqlDataAdapter adapterKicker = new SqlDataAdapter(cmdGetKicker);
+                            DataSet dsKick = new DataSet();
+                            adapterKicker.Fill(dsKick, "KICKER");
+
+                            dtKicker = dsKick.Tables["KICKER"];
+
+
+
+
+                            //objRealTestRunner = new clsRunRealTest(dictLimitsByModel);
+
+                            objRealTestRunner = new clsRunRealTest(dtLimits, dtKicker);
+
+                            objModelStates = new clsCheckModelSerialStates(strSqlConnection1);
+
+
+                            //Instantiating the BarTender object 
+
+                   //bartender         btApp = new BarTender.ApplicationClass();
+
+                            //Setting the BarTender Application Visible 
+
+                            //bartender         btApp.Visible = false;
+
+                            string strCWD = Directory.GetCurrentDirectory();
+
+                            //Setting the BarTender format to open  
+                            string strFullPrintPath = Path.Combine(new string[] { strCWD, "PSCSERIAL.btw" });
+                            //bartender              btFormat = btApp.Formats.Open(strFullPrintPath, false, ""); 
+
+
+                            string teststr1 = dtLimits.Rows[0]["Station_Name"].ToString();
+                            string teststr2 = dtLimits.Rows[1]["Station_Name"].ToString();
+
+
+                            this.Location = new Point(0, 0);
+
+//                            string strResult = objRealTestRunner.LookupTMInfo("000700036340","GD4110-BK-C140", strSerial);
+                            
+
+
+
+                            /*
+                            IEnumerable<DataRow> acsquery =
+      from limit in dtLimits.AsEnumerable()
+      where limit.Field<string>("SAP_Model_Name").Trim() == "TESTEST" &&
+      limit.Field<string>("Subtest_Name").Trim() == "ACSTEST"
+      select limit;
+                            if (acsquery.Count() > 0)
+                            {
+                                MessageBox.Show("Got One");
+                            }
+ */
+                        }
+                        catch (Exception ex)
+                        {
+                            MessageBox.Show(ex.Message);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+
+        }
+
+        private void txtModel_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void txtModel_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (e.KeyChar == 13)
+            {   //Enter Pressed}
+                if (txtSerial.Text.ToString().Trim().Length > 0)  // we have a model serial combination
+                {
+                    strModel = txtModel.Text.ToString().Trim();
+                    strSerial = txtSerial.Text.ToString().Trim();
+
+                    string strReturn = objRealTestRunner.ProcessModelSerialPair("", strModel, strSerial, strSqlConnection3, this);
+                }
+                else // set focus to serial number field
+                {
+                    txtSerial.Focus();
+                }
+            }
+
+        }
+
+        private void txtSerial_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (e.KeyChar == 13)
+            {
+                if (txtModel.Text.ToString().Trim().Length > 0) // we have a model serial combination
+                {
+                    string strProdOrder ="";
+                    string strPrintType ="";
+
+                    strModel = txtModel.Text.ToString().Trim();
+                    strSerial = txtSerial.Text.ToString().Trim();
+
+                    objModelStates.checkForPrePrint(strModel, strSerial, ref strProdOrder, ref strPrintType);
+
+
+                    txtProdOrder.Text = strProdOrder;
+                    if (strPrintType.Trim().Equals("D"))
+                    {
+                        string strReservedPSC ="" ;
+                        strReservedPSC = objModelStates.ReserveSerialForProductionOrder(strModel, strSerial, strProdOrder, "KICKER", ref strReservedPSC);
+
+                        if (strReservedPSC.Trim().Equals("BAD"))
+                        {
+                        }
+                        else
+                        {
+                            if (strReservedPSC.Trim().Equals("FUL"))
+                            {
+                            }
+                            else
+                            {
+                                txtSAPSerial.Text = strReservedPSC;
+                                //bartender                           btFormat.SetNamedSubStringValue("PSCSERIALBARCODE", strReservedPSC);
+
+                                //Exporting the label format to the clipboard
+
+                                //bartender                          btFormat.ExportToClipboard(BarTender.BtColors.btColors24Bit, BarTender.BtResolution.btResolutionPrinter);
+
+                                //Setting the picture object to the clipboard image 
+                                //bartender                          pictSerialBarCode.Image = Clipboard.GetImage(); // GetDataObject.GetData(DataFormats.Bitmap);
+
+                                barcode1.DataToEncode = strReservedPSC;
+                                barcode1.ShowText = false;
+                            }
+                        }
+                    }
+                    else
+                    {
+                    }
+                   
+
+                    string strReturn = objRealTestRunner.ProcessModelSerialPair("000700036340", strModel, strSerial, strSqlConnection3, this);
+
+
+                    if ( strReturn.Trim().Equals("OK")) 
+                    {
+                        this.txtModel.Text = "";
+                        this.txtSerial.Text = "";
+                        this.txtSAPSerial.Text = "";
+                        this.txtProdOrder.Text = "";
+                        this.txtModel.Focus();
+                    }
+                }
+                else   // set focus to model number field
+                {
+                   // txtModel.Focus();
+                }
+            }
+        }
+
+        private void txtSerial_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        {
+         ///   btApp.Quit();
+        }
+    }
+}
