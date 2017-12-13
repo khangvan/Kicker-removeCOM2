@@ -134,7 +134,8 @@ namespace Kicker
                 }
 
                 strTMFilesSourceDirectory = ConfigurationManager.AppSettings.Get("TMSourceDirectory").ToString().Trim();
-                strTMFilesDestDirectory = ConfigurationManager.AppSettings.Get("TMDestDirectory").ToString().Trim();
+
+                using (new ImpersonateUser("fixture", "DL", "stark300")) strTMFilesDestDirectory = ConfigurationManager.AppSettings.Get("TMDestDirectory").ToString().Trim();
                 iMaxTMHalfSecondLoops = Int32.Parse(ConfigurationManager.AppSettings.Get("TMTestMaxHalfSeconds").ToString()) ;
                 iMaxVBHalfSecondLoops = Int32.Parse(ConfigurationManager.AppSettings.Get("VBTestMaxHalfSeconds").ToString());
                 strTemp = ConfigurationManager.AppSettings.Get("UseAccessTables").ToString();

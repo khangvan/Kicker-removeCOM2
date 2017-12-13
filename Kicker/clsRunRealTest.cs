@@ -14,6 +14,7 @@ using System.Threading;
 using System.Runtime.InteropServices;
 using System.Runtime.Remoting.Messaging;
 using System.ComponentModel;
+using System.Security.Principal;
 
 
 namespace Kicker
@@ -1379,11 +1380,20 @@ new System.Diagnostics.ProcessStartInfo("cmd", "/c " + strExec);
                     strDownloadSpace += strTMCodiceDirectory;
                     strSourceSpace += strTMCodiceDirectory;
 
-
-                    using (new ImpersonateUser("production", "DL", "Prod1234"))
-                    {// download xuống local
-                        Copy(strSourceSpace, strDownloadSpace);
+                    try
+                    {
+                        //using (new ImpersonateUser("fixture", "DL", "stark300"))
+                        using (WindowsIdentity.GetCurrent().Impersonate())
+                        {// download xuống local
+                            Copy(strSourceSpace, strDownloadSpace);
+                        }
                     }
+                    catch (Exception ex)
+                    {
+
+                        MessageBox.Show(ex.Message);
+                    }
+                    
                     string strSESFileName = strDownloadSpace.Trim() + "\\" + strTMCodiceDirectory.Trim() + ".SES";
 
                     System.IO.FileStream fs = System.IO.File.Create(strSESFileName);
@@ -1547,7 +1557,7 @@ new System.Diagnostics.ProcessStartInfo("cmd", "/c " + strExec);
 
 
 
-                    using (new ImpersonateUser("production", "PSC", "Prod1234"))
+                    using (new ImpersonateUser("fixture", "dl", "stark300"))
                     {
                         Copy(strSourceSpace, strDownloadSpace);
                     }
@@ -1653,7 +1663,7 @@ new System.Diagnostics.ProcessStartInfo("cmd", "/c " + strExec);
 
 
         // Routines to Copy entire data structure over to local computer
-            public static void Copy(string sourceDirectory, string targetDirectory)     
+            public static void Copy_(string sourceDirectory, string targetDirectory)     //before Dec 13 2017
             {
 
                 try
@@ -1666,7 +1676,80 @@ new System.Diagnostics.ProcessStartInfo("cmd", "/c " + strExec);
                 {
                     MessageBox.Show(ex.Message);
                 }
-            }      
+            }
+
+            public static void Copy(string sourceDirectory, string targetDirectory)   //after Dec 13 2017
+            //public static void Copy(DirectoryInfo source, DirectoryInfo target)
+            {
+                
+                try
+                {
+                    
+                    string sourcePath = sourceDirectory;
+                    string targetPath = targetDirectory;
+
+                    //NEW- force delte local if exist soruce = connecting server
+                    if (System.IO.Directory.Exists(sourcePath))
+                    {
+                       
+
+                       System.IO.DirectoryInfo di = new DirectoryInfo(targetPath);
+
+                       foreach (FileInfo file in di.GetFiles())
+                       {
+                           //file.Delete();
+                           Process.Start("cmd.exe", string.Format("/c del /F /Q \"{0} ", file.FullName));
+
+                       }
+                       foreach (DirectoryInfo dir in di.GetDirectories())
+                       {
+                           dir.Delete(true);
+                       }
+                    }
+                   
+
+                    // To copy a folder's contents to a new location:
+                    // Create a new target folder, if necessary.
+                    if (!System.IO.Directory.Exists(targetPath))
+                    {
+                        System.IO.Directory.CreateDirectory(targetPath);
+                    }
+
+        
+
+                    // To copy all the files in one directory to another directory.
+                    // Get the files in the source folder. (To recursively iterate through
+                    // all subfolders under the current directory, see
+                    // "How to: Iterate Through a Directory Tree.")
+                    // Note: Check for target path was performed previously
+                    //       in this code example.
+                    if (System.IO.Directory.Exists(sourcePath))
+                    {
+                        string[] files = System.IO.Directory.GetFiles(sourcePath);
+
+                        // Copy the files and overwrite destination files if they already exist.
+                        foreach (string s in files)
+                        {
+                            // Use static Path methods to extract only the file name from the path.
+                            string fileName = System.IO.Path.GetFileName(s);
+                            string destFile = System.IO.Path.Combine(targetPath, fileName);
+                            System.IO.File.Copy(s, destFile, true);
+                        }
+                    }
+                    else
+                    {
+                        //Console.WriteLine("Source path does not exist!");
+                    }
+
+                    // Keep console window open in debug mode.
+                    //Console.WriteLine("Press any key to exit.");
+                    //Console.ReadKey();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
+            }  
         
             public static void CopyAll(DirectoryInfo source, DirectoryInfo target)     
             {
