@@ -35,6 +35,7 @@ namespace Kicker
         [DllImport("User32.dll")]
         static extern bool DestroyWindow(IntPtr hWnd);
 
+        public string strSerialStartChar;
         public string strSqlConnection1;
         public string strSqlConnection2;
         public string strSqlConnection3;
@@ -53,7 +54,7 @@ namespace Kicker
 
         public bool _vbTestFinished;
         public bool _tmTestFinished;
-        public bool _vbDied ;
+        public bool _vbDied;
         public bool _TMDied;
 
         public string strLastModel;
@@ -77,7 +78,7 @@ namespace Kicker
         public int iDoRework = 0;
         public Boolean bUseTMAccessFiles = false;
         public Boolean bPromptSerialSwitchBox = true;
-        public char cSwitchBoxBinarySeparator =';' ;
+        public char cSwitchBoxBinarySeparator = ';';
         public string strTestManagerRunPath = "C:\\idpmdc\\winate32\\dltest32.exe  ";
         public clsRunRealTest objRealTestRunner;
 
@@ -104,6 +105,8 @@ namespace Kicker
             {
                 string strTemp = "";
 
+                strSerialStartChar = ConfigurationManager.AppSettings.Get("SerialStartChar").ToString();
+
                 sqlConnection1 = new SqlConnection();
                 strSqlConnection1 = ConfigurationManager.AppSettings.Get("ACSEECONNECTION").ToString();
                 sqlConnection2 = new SqlConnection();
@@ -114,16 +117,16 @@ namespace Kicker
                 iDoRework = 0;
                 listStations = new List<clsStationInfo>();
 
-                strNetProConnectionString1 = ConfigurationManager.AppSettings.Get("NETPRODBLocation").ToString() ;
+                strNetProConnectionString1 = ConfigurationManager.AppSettings.Get("NETPRODBLocation").ToString();
                 strNetProConnectionString2 = ConfigurationManager.AppSettings.Get("NETPROSecondDBLocation").ToString();
                 strNetProFileLocation = ConfigurationManager.AppSettings.Get("NETPROFilesLocation").ToString();
 
-                string strEnglishphrase = "" ;
-                string strForeignphrase = "" ;
+                string strEnglishphrase = "";
+                string strForeignphrase = "";
                 if (!ConfigurationManager.AppSettings.Get("runLocation").ToString().Trim().Equals("Eugene"))
                 {
-     //               labelSKModel.Visible = true;
-     //               labelSKModel.Text = "(" + getForeignPhrase("MODEL", ref strEnglishphrase, ref strForeignphrase) + ")";
+                    //               labelSKModel.Visible = true;
+                    //               labelSKModel.Text = "(" + getForeignPhrase("MODEL", ref strEnglishphrase, ref strForeignphrase) + ")";
 
                     labelSKSerial.Visible = true;
                     labelSKSerial.Text = "(" + getForeignPhrase("ACSSERIALNUMBER", ref strEnglishphrase, ref strForeignphrase) + ")";
@@ -136,7 +139,7 @@ namespace Kicker
                 strTMFilesSourceDirectory = ConfigurationManager.AppSettings.Get("TMSourceDirectory").ToString().Trim();
 
                 using (new ImpersonateUser("fixture", "DL", "stark300")) strTMFilesDestDirectory = ConfigurationManager.AppSettings.Get("TMDestDirectory").ToString().Trim();
-                iMaxTMHalfSecondLoops = Int32.Parse(ConfigurationManager.AppSettings.Get("TMTestMaxHalfSeconds").ToString()) ;
+                iMaxTMHalfSecondLoops = Int32.Parse(ConfigurationManager.AppSettings.Get("TMTestMaxHalfSeconds").ToString());
                 iMaxVBHalfSecondLoops = Int32.Parse(ConfigurationManager.AppSettings.Get("VBTestMaxHalfSeconds").ToString());
                 strTemp = ConfigurationManager.AppSettings.Get("UseAccessTables").ToString();
                 if (strTemp.Trim().Equals("false"))
@@ -166,12 +169,12 @@ namespace Kicker
 
                 cSwitchBoxBinarySeparator = ConfigurationManager.AppSettings.Get("SwitchBoxBinarySeparatorChar").ToString().Trim()[0];
 
-/*                strPrintPackCustomerLabelName = ConfigurationManager.AppSettings.Get("PrintPackCustomerLabel").ToString();
-                strPrintPackOverpackContentLabelName = ConfigurationManager.AppSettings.Get("PrintPackOverpackContentLabel").ToString();
-                strPrintPackOverpackModelLabelName = ConfigurationManager.AppSettings.Get("PrintPackOverpackModelLabel").ToString();
+                /*                strPrintPackCustomerLabelName = ConfigurationManager.AppSettings.Get("PrintPackCustomerLabel").ToString();
+                                strPrintPackOverpackContentLabelName = ConfigurationManager.AppSettings.Get("PrintPackOverpackContentLabel").ToString();
+                                strPrintPackOverpackModelLabelName = ConfigurationManager.AppSettings.Get("PrintPackOverpackModelLabel").ToString();
 
-          
-*/
+
+                */
 
                 strLastModel = "";
                 strLastTestType = "";
@@ -215,7 +218,7 @@ namespace Kicker
 
                             //objRealTestRunner = new clsRunRealTest(dictLimitsByModel);
 
-                            objRealTestRunner = new clsRunRealTest(dtLimits, dtKicker,this);
+                            objRealTestRunner = new clsRunRealTest(dtLimits, dtKicker, this);
                             objRealTestRunner.TestFinished += this.TestFinishedHandler;
                             objRealTestRunner.GUIUpdate += this.checkandUpdateGui;
                             objModelStates = new clsCheckModelSerialStates(strSqlConnection1);
@@ -223,7 +226,7 @@ namespace Kicker
 
                             //Instantiating the BarTender object 
 
-                   //bartender         btApp = new BarTender.ApplicationClass();
+                            //bartender         btApp = new BarTender.ApplicationClass();
 
                             //Setting the BarTender Application Visible 
 
@@ -232,7 +235,7 @@ namespace Kicker
                             string strCWD = Directory.GetCurrentDirectory();
 
                             //Setting the BarTender format to open  
-                          //  string strFullPrintPath = Path.Combine(new string[] { strCWD, "PSCSERIAL.btw" });
+                            //  string strFullPrintPath = Path.Combine(new string[] { strCWD, "PSCSERIAL.btw" });
                             //bartender              btFormat = btApp.Formats.Open(strFullPrintPath, false, ""); 
 
                             string strProgramMDB = Path.Combine(new string[] { strCWD, "Program.mdb" });
@@ -281,13 +284,13 @@ namespace Kicker
                             }
 
 
-           //                 string teststr1 = dtLimits.Rows[0]["Station_Name"].ToString();
-           //                 string teststr2 = dtLimits.Rows[1]["Station_Name"].ToString();
+                            //                 string teststr1 = dtLimits.Rows[0]["Station_Name"].ToString();
+                            //                 string teststr2 = dtLimits.Rows[1]["Station_Name"].ToString();
 
 
                             this.Location = new Point(0, 0);
 
-//                 //           string strResult = objRealTestRunner.LookupTMInfo("000700036340","GD4110-BK-C140", strSerial);
+                            //                 //           string strResult = objRealTestRunner.LookupTMInfo("000700036340","GD4110-BK-C140", strSerial);
 
 
 
@@ -346,12 +349,163 @@ namespace Kicker
 
         private void txtModel_TextChanged(object sender, EventArgs e)
         {
-            
+
+        }
+        private void txtSerial_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            string strReturn;
+            if (e.KeyChar == 13)
+            {
+                if (strSerialStartChar.IndexOf(txtSerial.Text.Substring(0, 1)) == -1) //if (!txtSerial.Text.Substring(0, 1).ToUpper().Equals("S"))
+                {
+                    txtModel.Text = txtSerial.Text;
+                    txtSerial.Text = "";
+                }
+                else
+                {
+                    _vbDied = false;
+                    _vbTestFinished = false;
+                    if (txtModel.Text.ToString().Trim().Length > 0) // we have a model serial combination
+                    {
+                        string strProdOrder = "";
+                        string strPrintType = "";
+
+                        strModel = txtModel.Text.ToString().Trim();
+                        strSerial = txtSerial.Text.ToString().Trim();
+
+                        if (chkRework.Checked == true)
+                        {
+                            iDoRework = 1;
+                        }
+                        else
+                        {
+                            iDoRework = 0;
+                        }
+                        strReturn = objModelStates.checkForPrePrint(strModel, strSerial, ref strProdOrder, ref strPrintType);
+                        if (!strReturn.Equals("OK"))
+                        {
+                            if (!ConfigurationManager.AppSettings.Get("runLocation").ToString().Trim().Equals("Eugene"))
+                            {
+                                string strEnglishphrase = "";
+                                string strForeignphrase = "";
+                                MessageBox.Show("Order not started yet! (" + getForeignPhrase("ORDERNOSTARTED", ref strEnglishphrase, ref strForeignphrase) + ")");
+                            }
+                            else
+                            {
+
+                                MessageBox.Show("Order not started yet!");
+                            }
+
+                            return;
+                        }
+
+                        string strExecString = "";
+                        string strNextStation = "";
+                        myTestType = objRealTestRunner.DetermineTestType(strModel, out strExecString, out strNextStation);
+                        txtProdOrder.Text = strProdOrder;
+
+                        #region Verify Order # if not then focus 
+                        if (strProdOrder.Trim().Equals("") || strProdOrder.Trim().Equals("NONE"))
+                        {
+                            
+                            MessageBox.Show("Order is not Start! Input Order; Nhập số Production Order");
+                            txtProdOrder.Enabled = true;
+                            txtProdOrder.Text = "";
+                            txtProdOrder.Focus();
+                            return;
+                        }
+
+                        #endregion
+                        bool bRework;
+                        //                      string strLociResult = objRealTestRunner.checkNextStationDBLoci(strModel, strSerial, drKickerRowforModel["TFFC_KICKER_Station"].ToString().Trim(), this.strSqlConnection3, out bRework);
+
+                        if (strPrintType.Trim().Equals("D") && (myTestType == TestType.TMTest))
+                        {
+
+                            strReservedPSC = "";
+                            //                  strReservedPSC = objModelStates.ReserveSerialForProductionOrder(strModel, strSerial, strProdOrder, "KICKER", ref strReservedPSC);
+
+                            if (strReservedPSC.Trim().Equals("BAD") && myTestType == TestType.TMTest)
+                            {
+                            }
+                            else
+                            {
+                                if (strReservedPSC.Trim().Equals("FUL"))
+                                {
+                                }
+                                else
+                                {
+                                    txtSAPSerial.Text = strReservedPSC;
+                                    lblPSCBarcode.Text = "*" + strReservedPSC.Trim() + "*";
+                                }
+                            }
+                        }
+                        else
+                        {
+                            txtSAPSerial.Enabled = false;
+                            lblPSCBarcode.Visible = false;
+                        }
+
+                        txtModel.Enabled = false;
+                        txtSerial.Enabled = false;
+
+
+
+                        _vbTestFinished = false;
+                        _tmTestFinished = false;
+                        strReturn = objRealTestRunner.ProcessModelSerialPair(strProdOrder, strModel, strSerial, strSqlConnection3, this);
+
+
+                        if (strReturn.Trim().Equals("OK"))
+                        {
+                            //   this.txtModel.Text = "";
+                            //   this.txtSerial.Text = "";
+                            //          this.txtSAPSerial.Text = "";
+                            //     this.txtProdOrder.Text = "";
+
+                            //                           while (_vbTestFinished == false && _tmTestFinished == false)
+                            //                           {
+                            //                              Thread.Sleep(500);
+                            //                              this.Refresh();
+                            checkandUpdateGui(this);
+                            //                           }
+                            if (_vbTestFinished == true)
+                            {
+                                this.txtModel.Enabled = true;
+                                this.txtSerial.Enabled = true;
+                                this.txtModel.Text = "";
+                                this.txtSerial.Text = "";
+                                this.txtProdOrder.Text = "";
+                            }
+                            else
+                            {
+                                if (_tmTestFinished == true)
+                                {
+                                    txtModel.Enabled = true;
+                                    txtSerial.Enabled = true;
+
+                                    this.txtModel.Text = "";
+                                    this.txtSerial.Text = "";
+                                    this.txtProdOrder.Text = "";
+
+                                    this.txtModel.Focus();
+                                }
+                            }
+                            this.txtModel.Focus();
+                        }
+                    }
+
+                    else   // set focus to model number field
+                    {
+                        // txtModel.Focus();
+                    }
+                }
+            }
         }
 
         private void txtModel_KeyPress(object sender, KeyPressEventArgs e)
         {
-            
+
             string strReturn;
             if (e.KeyChar == 13)
             {   //Enter Pressed}
@@ -363,14 +517,14 @@ namespace Kicker
                 {
                     if (!txtModel.Text.Substring(0, 3).Equals("SVC"))
                     {
-                        
-                        
+
+
                         // Not SVC- then  Model
                         txtSerial.Focus();
-                        
-                        
 
-                        
+
+
+
                     }
                     else
                     { // here serial start with SVC
@@ -427,7 +581,7 @@ namespace Kicker
                             else
                             {
 
-                                MessageBox.Show("Order not started yet!");
+                                MessageBox.Show("Order not started yet! "); //Eugene
                             }
                             return;
                         }
@@ -443,7 +597,7 @@ namespace Kicker
                         {
 
                             strReservedPSC = "";
-       //                     strReservedPSC = objModelStates.ReserveSerialForProductionOrder(strModel, strSerial, strProdOrder, "KICKER", ref strReservedPSC);
+                            //                     strReservedPSC = objModelStates.ReserveSerialForProductionOrder(strModel, strSerial, strProdOrder, "KICKER", ref strReservedPSC);
 
                             if (strReservedPSC.Trim().Equals("BAD") && myTestType == TestType.TMTest)
                             {
@@ -521,14 +675,14 @@ namespace Kicker
 
         }
 
-        private void txtSerial_KeyPress(object sender, KeyPressEventArgs e)
-       {
-           DoKeyPress(e, false);
+        // private void txtSerial_KeyPress(object sender, KeyPressEventArgs e)
+        //{
+        //    DoKeyPress(e, false);
 
-           
-          
-         
-        }
+
+
+
+        // }
 
         /// <summary>
         /// true= Do and NO CAR KEY CHAR
@@ -540,7 +694,7 @@ namespace Kicker
         {
             string strReturn;
             e.KeyChar = (DoAllWay == true) ? (char)13 : e.KeyChar;
-            
+
             if (e.KeyChar == 13)
             {
 
@@ -612,6 +766,8 @@ namespace Kicker
                         string strNextStation = "";
                         myTestType = objRealTestRunner.DetermineTestType(strModel, out strExecString, out strNextStation);
                         txtProdOrder.Text = strProdOrder;
+                     
+
                         bool bRework;
                         //                      string strLociResult = objRealTestRunner.checkNextStationDBLoci(strModel, strSerial, drKickerRowforModel["TFFC_KICKER_Station"].ToString().Trim(), this.strSqlConnection3, out bRework);
 
@@ -732,13 +888,13 @@ namespace Kicker
 
         public void UpdateTestGUI(object sender, clsTestRunStatusEventArgs e)
         {
- //           if (this.InvokeRequired)
- //           {
- //               this.BeginInvoke((MethodInvoker)delegate { TestFinishedHandler(sender, e); });
- //               return;
- //           }
+            //           if (this.InvokeRequired)
+            //           {
+            //               this.BeginInvoke((MethodInvoker)delegate { TestFinishedHandler(sender, e); });
+            //               return;
+            //           }
 
-            if ((_vbTestFinished == true) || ( _vbDied == true ))
+            if ((_vbTestFinished == true) || (_vbDied == true))
             {
                 this.txtModel.Enabled = true;
                 this.txtSerial.Enabled = true;
@@ -748,7 +904,7 @@ namespace Kicker
             }
             else
             {
-                if ((_tmTestFinished == true) || (_TMDied == true ))
+                if ((_tmTestFinished == true) || (_TMDied == true))
                 {
                     txtModel.Enabled = true;
                     txtSerial.Enabled = true;
@@ -767,12 +923,12 @@ namespace Kicker
         {
             if (this.InvokeRequired)
             {
-                this.BeginInvoke((MethodInvoker)delegate { TestFinishedHandler(sender,e) ;} ) ;
+                this.BeginInvoke((MethodInvoker)delegate { TestFinishedHandler(sender, e); });
                 return;
             }
             clsTestRunStatusEventArgs myReturnValues = e;
 
-      //      MessageBox.Show("Test Finished");
+            //      MessageBox.Show("Test Finished");
 
             if (myTestType.Equals(TestType.TMTest))
             {
@@ -780,46 +936,46 @@ namespace Kicker
                 if (myReturnValues.strTestResult.Trim().Equals("P"))
                 {
                  * */
-                    /*
-                    if (!myReturnValues.strSAPSN.Trim().Equals(strReservedPSC.Trim()))
-                    {
- //                       objModelStates.UnReserveSerial(strModel, strSerial, strProductionOrder, "KICKER", ref strReservedPSC);
-                        //  strReservedPSC = objModelStates.ReserveSerialForProductionOrder(strModel, strSerial, strProductionOrder, "KICKER", ref strReservedPSC);
+                /*
+                if (!myReturnValues.strSAPSN.Trim().Equals(strReservedPSC.Trim()))
+                {
+//                       objModelStates.UnReserveSerial(strModel, strSerial, strProductionOrder, "KICKER", ref strReservedPSC);
+                    //  strReservedPSC = objModelStates.ReserveSerialForProductionOrder(strModel, strSerial, strProductionOrder, "KICKER", ref strReservedPSC);
 //                        objModelStates.CommitSerial(strModel, strSerial, strProductionOrder, "KICKER", myReturnValues.strSAPSN.Trim(), ref strReservedPSC);
-                    }
-                    else
-                    {
-                        objModelStates.CommitSerial(strModel, strSerial, strProductionOrder, "KICKER", myReturnValues.strSAPSN.Trim(), ref strReservedPSC);
-
-                    }
-                     * */
-                this.txtModel.Enabled = true;
-                this.txtSerial.Enabled = true;
-/*
-                    IEnumerable<DataRow> acsquery =
-    from kicker in dtKicker.AsEnumerable()
-    where kicker.Field<string>("TFFC_KICKER_Model").Trim() == strModel.Trim()
-    select kicker;
-                     DataTable dtResult = acsquery.CopyToDataTable<DataRow>();
-                     if (dtResult.Rows.Count > 0)
-                     {
-                         drKickerRowforModel = dtKicker.Rows[0];
-                     }
-                     else
-                     {
-                         MessageBox.Show("No Entry found in TFFC_KICKER_TABLE");
-                     }
-
-                    string strLociReturn = objRealTestRunner.UpdateLoci(strModel,strSerial,dtResult.Rows[0]["TFFC_KICKER_QBUDDIES"].ToString()) ;
- */
-  /*
                 }
                 else
                 {
-                    objModelStates.UnReserveSerial(strModel, strSerial, strProductionOrder, "KICKER", ref strReservedPSC);
+                    objModelStates.CommitSerial(strModel, strSerial, strProductionOrder, "KICKER", myReturnValues.strSAPSN.Trim(), ref strReservedPSC);
 
                 }
-                */
+                 * */
+                this.txtModel.Enabled = true;
+                this.txtSerial.Enabled = true;
+                /*
+                                    IEnumerable<DataRow> acsquery =
+                    from kicker in dtKicker.AsEnumerable()
+                    where kicker.Field<string>("TFFC_KICKER_Model").Trim() == strModel.Trim()
+                    select kicker;
+                                     DataTable dtResult = acsquery.CopyToDataTable<DataRow>();
+                                     if (dtResult.Rows.Count > 0)
+                                     {
+                                         drKickerRowforModel = dtKicker.Rows[0];
+                                     }
+                                     else
+                                     {
+                                         MessageBox.Show("No Entry found in TFFC_KICKER_TABLE");
+                                     }
+
+                                    string strLociReturn = objRealTestRunner.UpdateLoci(strModel,strSerial,dtResult.Rows[0]["TFFC_KICKER_QBUDDIES"].ToString()) ;
+                 */
+                /*
+                              }
+                              else
+                              {
+                                  objModelStates.UnReserveSerial(strModel, strSerial, strProductionOrder, "KICKER", ref strReservedPSC);
+
+                              }
+                              */
                 _tmTestFinished = true;
                 if (e.bTestDied == true)
                 {
@@ -832,22 +988,22 @@ namespace Kicker
                 {
                     _vbTestFinished = true;
 
-//                    this.txtModel.Focus();
+                    //                    this.txtModel.Focus();
                     if (e.bTestDied == true)
                     {
-                        _vbDied   = true;
+                        _vbDied = true;
                     }
 
                 }
             }
-            
-            UpdateTestGUI(sender,e);
+
+            UpdateTestGUI(sender, e);
         }
 
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
-         ///   btApp.Quit();
+            ///   btApp.Quit();
             if (objRealTestRunner != null)
             {
                 if (objRealTestRunner.hwndVB != (IntPtr)0)
@@ -928,11 +1084,11 @@ namespace Kicker
         }
         private void button2_Click(object sender, EventArgs e)
         {
-            
-            
+
+
             string strSource = @"\\vnmsrv608\DevelopSoftware\P20-KickerWO_PWControl\PS3645A on COM 6.exe";
             string strDes = @"C:\DATA\ColumbusConfig\Power Supply Stand Alone for XP" + @"\PS3645A on COM 6.exe";
-                //"C:\kicker-pwCOM6\Kicker\bin\Debug\Power Supply Stand Alone for XP\PS3645A on COM 6.exe";
+            //"C:\kicker-pwCOM6\Kicker\bin\Debug\Power Supply Stand Alone for XP\PS3645A on COM 6.exe";
             CheckFileExistthenCopy(strSource, strDes);
             #region MỞ NGUỒN COM 6 CHO TM / OPEN PW VIA COM6
 
@@ -952,5 +1108,24 @@ namespace Kicker
 
         }
 
+        private void txtProdOrder_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            // create Loci to TMTEST //kvan Dec 18
+            if (e.KeyChar == 13)
+            {
+                string Station = "TMTEST";
+                string strRS = "";
+                objModelStates.loadLociOrder(txtProdOrder.Text.Trim(), Station, ref strRS);
+                //MessageBox.Show(strRS);
+                if (strRS.Substring(0,2).Equals("OK"))
+                {
+                    txtModel.Text = "";
+                    txtSAPSerial.Text = "";
+                    
+                    MessageBox.Show("Done, Nhập lại Serial"+strRS);
+                    txtModel.Focus();
+                }
+            }
+        }
     }
 }

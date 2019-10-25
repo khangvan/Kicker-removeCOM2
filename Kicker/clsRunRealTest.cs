@@ -1678,7 +1678,69 @@ new System.Diagnostics.ProcessStartInfo("cmd", "/c " + strExec);
                 }
             }
 
-            public static void Copy(string sourceDirectory, string targetDirectory)   //after Dec 13 2017
+            public static void Copy(string sourceDirectory, string targetDirectory)
+        // kvan Oct 24        
+        {
+            string sourceDir = sourceDirectory;//@"\\vnmsrv601\DevelopSoftware\test\svn00004";
+            string backupDir = targetDirectory;// @"D:\tmp\SVN00004";
+
+            try
+            {
+                if (!Directory.Exists(backupDir))
+                    Directory.CreateDirectory(backupDir);
+
+                string[] picList = Directory.GetFiles(sourceDir, "*.*");
+                string[] txtList = Directory.GetFiles(sourceDir, "*.*");
+
+                // Copy picture files.
+                foreach (string f in picList)
+                {
+                    // Remove path from the file name.
+                    string fName = f.Substring(sourceDir.Length + 1);
+
+                    // Use the Path.Combine method to safely append the file name to the path.
+                    // Will overwrite if the destination file already exists.
+                    File.Copy(Path.Combine(sourceDir, fName), Path.Combine(backupDir, fName), true);
+                }
+
+                // Copy text files.
+                foreach (string f in txtList)
+                {
+
+                    // Remove path from the file name.
+                    string fName = f.Substring(sourceDir.Length + 1);
+
+                    try
+                    {
+                        // Will not overwrite if the destination file already exists.
+                        File.Copy(Path.Combine(sourceDir, fName), Path.Combine(backupDir, fName));
+                    }
+
+                    // Catch exception if the file was already copied.
+                    catch (IOException copyError)
+                    {
+                        Console.WriteLine(copyError.Message);
+                    }
+                }
+
+                //// Delete source files that were copied.
+                //foreach (string f in txtList)
+                //{
+                //    File.Delete(f);
+                //}
+                //foreach (string f in picList)
+                //{
+                //    File.Delete(f);
+                //}
+            }
+
+            catch (DirectoryNotFoundException dirNotFound)
+            {
+                Console.WriteLine(dirNotFound.Message);
+            }
+            //MessageBox.Show("done");
+        }
+        public static void Copy_cmd(string sourceDirectory, string targetDirectory)   //after Dec 13 2017 kvan
             //public static void Copy(DirectoryInfo source, DirectoryInfo target)
             {
                 
@@ -1710,20 +1772,21 @@ new System.Diagnostics.ProcessStartInfo("cmd", "/c " + strExec);
 
                     // To copy a folder's contents to a new location:
                     // Create a new target folder, if necessary.
-                    if (!System.IO.Directory.Exists(targetPath))
+                    if (!System.IO.Directory.Exists(targetPath.Trim()))
                     {
                         System.IO.Directory.CreateDirectory(targetPath);
                     }
+                    // forecreate folder
+                    System.IO.Directory.CreateDirectory(targetPath);
 
-        
 
-                    // To copy all the files in one directory to another directory.
-                    // Get the files in the source folder. (To recursively iterate through
-                    // all subfolders under the current directory, see
-                    // "How to: Iterate Through a Directory Tree.")
-                    // Note: Check for target path was performed previously
-                    //       in this code example.
-                    if (System.IO.Directory.Exists(sourcePath))
+                // To copy all the files in one directory to another directory.
+                // Get the files in the source folder. (To recursively iterate through
+                // all subfolders under the current directory, see
+                // "How to: Iterate Through a Directory Tree.")
+                // Note: Check for target path was performed previously
+                //       in this code example.
+                if (System.IO.Directory.Exists(sourcePath))
                     {
                         string[] files = System.IO.Directory.GetFiles(sourcePath);
 

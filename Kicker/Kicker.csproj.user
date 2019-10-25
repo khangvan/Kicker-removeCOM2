@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <PublishUrlHistory>\\vnmsrv601\DevelopSoftware\P20-KickerWO_PWControl\|\\vnmsrv601\DevelopSoftware\PRELEASE\P20-KickerWO_PWControl\|\\vnmsrv608\DevelopSoftware\P20-KickerWO_PWControl\|\\vnmsrv601\DevelopSoftware\P20-KickerWO_PWControl_vnmsrv305\|\\vnmsrv601\DevelopSoftware\P20-KickerWO_PWControl_2DACSPROJECT-TEST\</PublishUrlHistory>
+    <InstallUrlHistory>\\vnmsrv608\DevelopSoftware\P20-KickerWO_PWControl\|http://svkacsrpt.eng.pscnet.com/Kicker/</InstallUrlHistory>
+    <SupportUrlHistory />
+    <UpdateUrlHistory />
+    <BootstrapperUrlHistory />
+    <ErrorReportUrlHistory />
+    <FallbackCulture>en-US</FallbackCulture>
+    <VerifyUploadedFiles>false</VerifyUploadedFiles>
+  </PropertyGroup>
+  <PropertyGroup>
+    <EnableSecurityDebugging>false</EnableSecurityDebugging>
+  </PropertyGroup>
+</Project>

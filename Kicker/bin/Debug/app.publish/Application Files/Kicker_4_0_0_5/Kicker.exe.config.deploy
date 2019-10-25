@@ -16,13 +16,14 @@
     <add key="NETPROFilesLocation"  value="\\somewhereelse"/>
     <add key="UseAccessTables" value="false"/>
     <add key="TestManagerRunPath" value="C:\idpmdc\winate32\dltest32.exe  "/>
-    <add key="TMSourceDirectory" value="\\Vnmsrv603.dl.net\prd\SW-Test\Winate\"/>
+    <add key="TMSourceDirectoryOLD" value="\\Vnmsrv603.dl.net\prd\SW-Test\Winate\"/>
+    <add key="TMSourceDirectory" value="\\Vnmsrv305.dl.net\SW-Test\Winate\"/>
     <add key="TMDestDirectory" value="c:\idpmdc\TA\TM\"/>
     <add key="TMTestMaxHalfSeconds" value="99999"/>
     <add key="VBTestMaxHalfSeconds" value="99999" />
     <add key="PromptSerialSwitchBox" value="false"/>
     <add key="SwitchBoxBinarySeparatorChar" value=";"/>
-
+    <add key="SerialStartChar" value="SsEeFfGgVv"/>
     <add key="runLocation" value="Slovakia"/>
 
     <add key="SendKeys" value="SendInput"/>

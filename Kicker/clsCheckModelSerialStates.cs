@@ -83,6 +83,63 @@ namespace Kicker
             return strPrintType ;
         }
 
+        public string loadLociOrder(string strProdOrder, string strStation, ref string strReturn)
+        {
+            SqlConnection sqlConnectionACSEE;
+            try
+            {
+                using (sqlConnectionACSEE = new SqlConnection(strSqlConnection1))
+                {
+                    sqlConnectionACSEE.Open();
+                    if (sqlConnectionACSEE.State.Equals(ConnectionState.Open))
+                    {
+                        try
+                        {
+                            SqlCommand cmdGetProdOrderInfo = sqlConnectionACSEE.CreateCommand();
+                            cmdGetProdOrderInfo.CommandType = CommandType.StoredProcedure;
+                            cmdGetProdOrderInfo.CommandText = "ame_TFFC_LoadLociOrder";
+
+
+                            cmdGetProdOrderInfo.Parameters.Add("@prodorder ", SqlDbType.Char, 20);
+                            cmdGetProdOrderInfo.Parameters["@prodorder "].Value = strProdOrder;
+                            cmdGetProdOrderInfo.Parameters["@prodorder "].Direction = ParameterDirection.Input;
+
+                            cmdGetProdOrderInfo.Parameters.Add("@nextstation", SqlDbType.Char, 20);
+                            cmdGetProdOrderInfo.Parameters["@nextstation"].Value = strStation;
+                            cmdGetProdOrderInfo.Parameters["@nextstation"].Direction = ParameterDirection.Input;
+
+                            cmdGetProdOrderInfo.Parameters.Add("@rs", SqlDbType.Char, 20);
+                            cmdGetProdOrderInfo.Parameters["@rs"].Direction = ParameterDirection.Output;
+
+                            using (SqlDataReader rd = cmdGetProdOrderInfo.ExecuteReader())
+                            {
+                                if (rd.HasRows == true)
+                                {
+                                    rd.Read();
+                                    strReturn = rd["RS"].ToString();
+                                    
+                                    return "OK";
+                                }
+                                else
+                                {
+                                    return "NOTFOUND";
+                                }
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            MessageBox.Show(ex.Message);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+            return strReturn;
+        }
+
 
         public string ReserveSerialForProductionOrder(string strModel, string strACSSerial, 
             string strProductionOrder, string strStation, ref string strPSCSerial)

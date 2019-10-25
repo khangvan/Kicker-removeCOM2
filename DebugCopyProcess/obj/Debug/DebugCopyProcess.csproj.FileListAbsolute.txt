@@ -1,0 +1,10 @@
+D:\9. GitSource\Kicker-removeCOM2\DebugCopyProcess\bin\Debug\DebugCopyProcess.exe.config
+D:\9. GitSource\Kicker-removeCOM2\DebugCopyProcess\bin\Debug\DebugCopyProcess.exe
+D:\9. GitSource\Kicker-removeCOM2\DebugCopyProcess\bin\Debug\DebugCopyProcess.pdb
+D:\9. GitSource\Kicker-removeCOM2\DebugCopyProcess\obj\Debug\DebugCopyProcess.Form1.resources
+D:\9. GitSource\Kicker-removeCOM2\DebugCopyProcess\obj\Debug\DebugCopyProcess.Properties.Resources.resources
+D:\9. GitSource\Kicker-removeCOM2\DebugCopyProcess\obj\Debug\DebugCopyProcess.csproj.GenerateResource.cache
+D:\9. GitSource\Kicker-removeCOM2\DebugCopyProcess\obj\Debug\DebugCopyProcess.csproj.CoreCompileInputs.cache
+D:\9. GitSource\Kicker-removeCOM2\DebugCopyProcess\obj\Debug\DebugCopyProcess.exe
+D:\9. GitSource\Kicker-removeCOM2\DebugCopyProcess\obj\Debug\DebugCopyProcess.pdb
+D:\9. GitSource\Kicker-removeCOM2\DebugCopyProcess\obj\Debug\DebugCopyProcess.csprojAssemblyReference.cache
